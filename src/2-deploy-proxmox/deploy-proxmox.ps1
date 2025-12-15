@@ -30,13 +30,13 @@ function Get-VMIPv4 {
     throw "Failed to obtain IP for VM $VmName"
 }
 
-Write-Host "==> Preparing VM directory"
+Write-Information "==> Preparing VM directory"
 New-Item -ItemType Directory -Force -Path $vmDir | Out-Null
 
-Write-Host "==> Copying golden VHDX"
+Write-Information "==> Copying golden VHDX"
 Copy-Item -Path $cfg.GoldenVhdx -Destination $vhdDst -Force
 
-Write-Host "==> Creating VM"
+Write-Information "==> Creating VM"
 Remove-VM -Name $cfg.VmName -ErrorAction SilentlyContinue
 New-VM `
     -Name $cfg.VmName `
@@ -46,35 +46,35 @@ New-VM `
     -VHDPath $vhdDst `
     -SwitchName $cfg.SwitchName
 
-Write-Host "==> Setting CPU and Memory"
+Write-Information "==> Setting CPU and Memory"
 Set-VM `
     -Name $cfg.VmName `
     -ProcessorCount $cfg.CpuCount `
     -StaticMemory `
     -MemoryStartupBytes ($cfg.MemoryGB * 1GB)
 
-Write-Host "==> Resizing disk"
+Write-Information "==> Resizing disk"
 Resize-VHD -Path $vhdDst -SizeBytes ($cfg.DiskGB * 1GB)
 
-Write-Host "==> Enabling nested virtualization"
+Write-Information "==> Enabling nested virtualization"
 Set-VMProcessor `
     -VMName $cfg.VmName `
     -ExposeVirtualizationExtensions $true
 
-Write-Host "==> Disabling Secure Boot"
+Write-Information "==> Disabling Secure Boot"
 Set-VMFirmware `
     -VMName $cfg.VmName `
     -EnableSecureBoot Off
 
-Write-Host "==> Starting VM"
+Write-Information "==> Starting VM"
 Start-VM -Name $cfg.VmName
 
-Write-Host "==> Proxmox VM deployed successfully!"
+Write-Information "==> Proxmox VM deployed successfully!"
 
-Write-Host "==> Waiting for VM IP..."
+Write-Information "==> Waiting for VM IP..."
 $vmIp = Get-VMIPv4 -VmName $cfg.VmName
 
 $uiUrl = "https://${vmIp}:8006"
 
-Write-Host "==> Proxmox UI: ${uiUrl}"
+Write-Information "==> Proxmox UI: ${uiUrl}"
 Start-Process $uiUrl

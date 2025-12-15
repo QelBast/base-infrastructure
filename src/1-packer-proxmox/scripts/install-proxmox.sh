@@ -12,7 +12,7 @@ echo "deb http://download.proxmox.com/debian/pve trixie pve-no-subscription" \
 apt update
 apt full-upgrade -y
 
-apt install -y proxmox-ve postfix open-iscsi
+apt install -y proxmox-ve postfix open-iscsi git packer make
 
 systemctl enable pveproxy
 systemctl enable pvedaemon
@@ -23,5 +23,7 @@ apt remove -y linux-image-amd64 || true
 echo "Proxmox installed successfully"
 
 echo "Load node golden-image creation configs"
-git clone https://github.com/
+git clone https://github.com/QelBast/packer-k8s-node-builders.git
+cd packer-k8s-node-builders/ubuntu
+
 exit 0
