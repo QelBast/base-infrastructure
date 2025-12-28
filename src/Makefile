@@ -1,8 +1,8 @@
 SHELL := pwsh.exe
 .SHELLFLAGS := -Command
 
-ST1DIR = .\1-packer-node-os
-ST2DIR = .\2-packer-proxmox
+ST1DIR = .\1-packer-proxmox
+ST2DIR = .\2-packer-node-os
 ST3DIR = .\3-deploy-proxmox
 
 TF = terraform
@@ -24,9 +24,10 @@ export TF_LOG_PATH=./tf.log
 all: init plan apply
 
 stage1:
+	$(PKR) init $(ST1DIR)
+	$(PKR) build -var-file='$(ST1DIR)/variables.auto.pkrvars.hcl' '$(ST1DIR)'
+stage2:
 	$(PKR) init $(ST2DIR)
 	$(PKR) build -var-file='$(ST2DIR)/variables.auto.pkrvars.hcl' '$(ST2DIR)'
-stage2:
+stage3:
 	$(ST3DIR)/deploy-proxmox -ConfigPath $(ST3DIR)\config.psd1
-stage4:
-	$(TF) apply -auto-approve -input=false

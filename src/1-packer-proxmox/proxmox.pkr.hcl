@@ -33,17 +33,28 @@ source "hyperv-iso" "proxmox" {
 
   output_directory     = "${path.root}/../../VHDs/${var.vm_name}"
 
-  http_directory       = "${path.root}/http"
-
+  http_content         = {
+    "/preseed.cfg" = templatefile("${path.root}/../http/preseed.tmpl", 
+    {
+      hostname         = var.hostname,
+      domain           = var.domain,
+      root_password    = var.root_password,
+      timezone         = var.timezone,
+      username         = var.username,
+      password         = var.password,
+      fullname         = var.fullname
+    })
+  }
   shutdown_command     = "shutdown -h now"
   shutdown_timeout     = "40m"
 
   boot_wait            = "10s"
+  
   boot_command         = [
     "<esc><wait>",
     "<down><down><enter><wait10>",
     "<down><down><down><down><down><enter><wait60>",
-    "http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
+    "http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
     "<enter>"
   ]
 }
@@ -53,7 +64,13 @@ build {
   sources = ["source.hyperv-iso.proxmox"]
 
   provisioner "shell" {
-    script = "${path.root}/scripts/install-proxmox.sh"
+    environment_vars  = [
+      #"USER=${var.username} KEY=${var.oath_key} VERSION=${var.debian_version}"
+      "USER='${var.username}'", 
+      "KEY='${var.oath_key}'", 
+      "VERSION='${var.debian_version}'"
+    ]
+    script            = "./${path.root}/scripts/install-proxmox.sh"
     expect_disconnect = true
   }
 }

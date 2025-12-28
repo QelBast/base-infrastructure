@@ -42,27 +42,32 @@ variable "iso_checksum" {
   description = "Checksum for the ISO image"
   default     = "sha256:677c4d57aa034dc192b5191870141057574c1b05df2b9569c0ee08aa4e32125d"
 }
+variable "debian_version" {
+  type        = string
+  description = "Debian version. Release name"
+  default     = "trixie"
+}
 
 # VM Configuration
 variable "hostname" {
   type        = string
   description = "Hostname of the VM"
-  default     = "qelb-vmhub"
+  default     = "vmhub"
 }
 variable "domain" {
   type        = string
   description = "Web domain of the VM"
   default     = "local"
 }
+variable "timezone" {
+  type        = string
+  description = "Timezone for the VM"
+  default     = "Etc/UTC" # Europe/Berlin
+}
 variable "root_password" {
   type        = string
   description = "Root password for the VM"
   sensitive   = true
-}
-variable "timezone" {
-  type        = string
-  description = "Timezone for the VM"
-  default     = "Etc/UTC" # Europe/Moscow
 }
 
 # User Configuration
@@ -80,4 +85,12 @@ variable "fullname" {
   type        = string
   description = "Full name for the user"
   default     = "Proxmox Admin"
+}
+
+# YubiKey Configuration
+variable "oath_key" {
+  type        = string
+  description = "YubiKey OATH secret"
+  default     = "none"
+  sensitive   = true
 }
