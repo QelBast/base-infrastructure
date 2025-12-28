@@ -16,12 +16,14 @@ d-i netcfg/hostname string ${hostname}
 # hostname
 d-i netcfg/get_hostname string ${hostname}
 d-i netcfg/hostname_seen boolean true
-d-i netcfg/get_domain string local
+d-i netcfg/get_domain string ${domain}
 
 d-i mirror/http/hostname string deb.debian.org
 d-i mirror/http/directory string /debian
 d-i mirror/http/proxy string
 
+d-i passwd/root-password password ${root_password}
+d-i passwd/root-password-again password ${root_password}
 d-i passwd/root-login boolean false
 
 # Create a user
@@ -30,6 +32,7 @@ d-i passwd/user-fullname string ${fullname}
 d-i passwd/username string ${username}
 d-i passwd/user-password password ${password}
 d-i passwd/user-password-again password ${password}
+d-i passwd/user-default-groups string audio cdrom video sudo
 
 # User timezone
 d-i clock-setup/utc boolean true

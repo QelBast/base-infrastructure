@@ -10,36 +10,36 @@ packer {
 }
 
 source "hyperv-iso" "proxmox" {
-  iso_url       = var.iso_url
-  iso_checksum  = var.iso_checksum
+  iso_url              = var.iso_url
+  iso_checksum         = var.iso_checksum
+      
+  vm_name              = var.vm_name
+  memory               = var.memory
+  cpus                 = var.cpus
+  disk_size            = var.disk_size
 
-  vm_name       = var.vm_name
-  memory        = var.memory
-  cpus          = var.cpus
-  disk_size     = var.disk_size
-
-  generation = 2
-  enable_secure_boot = false
+  generation           = 2
+  enable_secure_boot   = false
   guest_additions_mode = "disable"
-  mac_address = var.mac # for ssh dhcp connect
-  switch_name   = var.switch_name
-  
-  communicator = "ssh"
-  ssh_username = var.ssh_username
-  ssh_password = var.ssh_password
-  ssh_timeout        = "30m"
+  mac_address          = var.mac # for ssh dhcp connect
+  switch_name          = var.switch_name
 
-  iso_target_path     = "${path.root}/packer_cache"
+  communicator         = "ssh"
+  ssh_username         = var.username
+  ssh_password         = var.password
+  ssh_timeout          = "30m"
 
-  output_directory = "${path.root}/../../VHDs/${var.vm_name}"
+  iso_target_path      = "${path.root}/../packer_cache"
 
-  http_directory = "${path.root}/http"
+  output_directory     = "${path.root}/../../VHDs/${var.vm_name}"
 
-  shutdown_command = "shutdown -h now"
-  shutdown_timeout = "40m"
+  http_directory       = "${path.root}/http"
 
-  boot_wait = "10s"
-  boot_command = [
+  shutdown_command     = "shutdown -h now"
+  shutdown_timeout     = "40m"
+
+  boot_wait            = "10s"
+  boot_command         = [
     "<esc><wait>",
     "<down><down><enter><wait10>",
     "<down><down><down><down><down><enter><wait60>",
