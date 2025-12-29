@@ -87,6 +87,12 @@ variable "fullname" {
   default     = "Proxmox Admin"
 }
 
+# SSH Key Configuration
+variable "ssh_key_path" {
+  type        = string
+  description = "Password for the user"
+}
+
 # YubiKey Configuration
 variable "oath_key" {
   type        = string

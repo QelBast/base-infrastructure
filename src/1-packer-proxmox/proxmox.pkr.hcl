@@ -9,31 +9,37 @@ packer {
   }
 }
 
+locals {
+  ssh_public_key = trimspace(file("${path.cwd}/${var.ssh_key_path}.pub"))
+}
+
 source "hyperv-iso" "proxmox" {
-  iso_url              = var.iso_url
-  iso_checksum         = var.iso_checksum
-      
-  vm_name              = var.vm_name
-  memory               = var.memory
-  cpus                 = var.cpus
-  disk_size            = var.disk_size
+  iso_url                   = var.iso_url
+  iso_checksum              = var.iso_checksum
 
-  generation           = 2
-  enable_secure_boot   = false
-  guest_additions_mode = "disable"
-  mac_address          = var.mac # for ssh dhcp connect
-  switch_name          = var.switch_name
+  vm_name                   = var.vm_name
+  memory                    = var.memory
+  cpus                      = var.cpus
+  disk_size                 = var.disk_size
 
-  communicator         = "ssh"
-  ssh_username         = var.username
-  ssh_password         = var.password
-  ssh_timeout          = "30m"
+  generation                = 2
+  enable_secure_boot        = false
+  guest_additions_mode      = "disable"
+  mac_address               = var.mac # For ssh dhcp connect
+  switch_name               = var.switch_name
 
-  iso_target_path      = "${path.root}/../packer_cache"
+  communicator              = "ssh"
+  ssh_username              = var.username
+  #ssh_password             = var.password # Connect securely by key
+  ssh_private_key_file      = var.ssh_key_path
+  ssh_clear_authorized_keys = true  # Clean after
+  ssh_timeout               = "30m"
 
-  output_directory     = "${path.root}/../../VHDs/${var.vm_name}"
+  iso_target_path           = "${path.root}/../packer_cache"
 
-  http_content         = {
+  output_directory          = "${path.root}/../../VHDs/${var.vm_name}"
+
+  http_content              = {
     "/preseed.cfg" = templatefile("${path.root}/../http/preseed.tmpl", 
     {
       hostname         = var.hostname,
@@ -42,7 +48,8 @@ source "hyperv-iso" "proxmox" {
       timezone         = var.timezone,
       username         = var.username,
       password         = var.password,
-      fullname         = var.fullname
+      fullname         = var.fullname,
+      ssh_public_key   = local.ssh_public_key
     })
   }
   shutdown_command     = "shutdown -h now"

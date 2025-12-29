@@ -4,8 +4,8 @@ set -eux
 
 echo "Installing Proxmox VE..."
 
-sudo sh -c 'echo "deb http://download.proxmox.com/debian/pve $VERSION pve-no-subscription" \
-  > /etc/apt/sources.list.d/pve.list'
+sudo sh -c "echo \"deb http://download.proxmox.com/debian/pve $VERSION pve-no-subscription\" \
+  > /etc/apt/sources.list.d/pve.list"
 
 sudo apt update && sudo apt full-upgrade -y
 
@@ -51,7 +51,7 @@ if [ -n "$KEY" ] && [ "$KEY" != "none" ]; then
   sudo apt install -y oathtool  # If TOTP fallback
 
   # Example for user TFA (replace key with your YubiKey OATH secret):
-  sudo pveum user modify $USER@pve --tfa 'type=oath,step=30,digits=6,key=$KEY'
+  sudo pveum user modify $USER@pve --tfa "type=oath,step=30,digits=6,key=$KEY"
 fi
 
 echo "Proxmox installed successfully"

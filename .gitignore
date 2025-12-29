@@ -1,6 +1,13 @@
 # My file for LLM communication history
 *LLM.docx
 
+# Key files
+*.pem
+*.key
+keys/*
+# gitkeep file negation
+!keys/.gitkeep
+
 # Local .terraform directories
 .terraform/
 

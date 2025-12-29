@@ -11,6 +11,9 @@ PROXY = http://localhost:34822
 # --- Variables file (git ignore)
 TFVARS = -var-file=terraform.tfvars
 
+KEYSPATH = ../keys
+ST1KEY= proxmox_key
+
 # --- Proxy environment (for Terraform registry access) ---
 export HTTP_PROXY=$(PROXY)
 export HTTPS_PROXY=$(PROXY)
@@ -24,8 +27,10 @@ export TF_LOG_PATH=./tf.log
 all: init plan apply
 
 stage1:
+	rm $(KEYSPATH)/$(ST1KEY)*
+	ssh-keygen -q -v -t ed25519 -f $(KEYSPATH)/$(ST1KEY) -N ""
 	$(PKR) init $(ST1DIR)
-	$(PKR) build -var-file='$(ST1DIR)/variables.auto.pkrvars.hcl' '$(ST1DIR)'
+	$(PKR) build -var-file='$(ST1DIR)/variables.auto.pkrvars.hcl' -var ssh_key_path='$(KEYSPATH)/$(ST1KEY)' '$(ST1DIR)'
 stage2:
 	$(PKR) init $(ST2DIR)
 	$(PKR) build -var-file='$(ST2DIR)/variables.auto.pkrvars.hcl' '$(ST2DIR)'
